@@ -1,16 +1,21 @@
 from flask import Blueprint, Flask, render_template, request, jsonify
+from pymongo import MongoClient
 
 studylogs_bp = Blueprint('studylogs', __name__, url_prefix='/studylogs')
 
+client = MongoClient('localhost',27017)
+db = client.dbjungminder
+
 @studylogs_bp.route('/create', methods=['POST'])
 def studylogs_create():
-    title = request.form['title']
-    content = request.form['content']
+    # title = request.form['title']
+    # content = request.form['content']
     
-    logs = {
-        'title' : title,
-        'content' : content
-        
+    studylogs = {
+        'title' : "test",
+        'content' : "test"
     }
     
-    return 0
+    db.studylogs.insert_one(studylogs)
+    
+    return jsonify({'result':'success'})
