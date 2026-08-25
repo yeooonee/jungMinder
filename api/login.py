@@ -76,6 +76,24 @@ def login():
 
    return jsonify({"result": "success"})
 
+#아이디 중복확인
+@app.route('/check-id', methods=['POST'])
+def check_id():
+   id = request.form['id']
+
+   user = db.user.find_one({"id": id})
+
+   if user is None:
+      return jsonify({
+         "result": "success",
+         "msg": "사용 가능한 아이디입니다."
+      })
+   else:
+      return jsonify({
+         "result": "fail",
+         "msg": "중복된 아이디입니다."
+      })
+
 @app.route('/check-session')
 def check_session():
    return jsonify({"user_id": session.get('user_id')})

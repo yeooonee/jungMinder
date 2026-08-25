@@ -41,7 +41,7 @@
                 class="border px-2 py-1 mb-2"
             >
 
-            <button class="border px-2 py-1 mb-3">
+            <button class="border px-2 py-1 mb-3" onclick="checkId()">
                 중복확인
             </button>
 
@@ -116,7 +116,7 @@
             console.log(pw);
             console.log(pwConfirm);
 
-            // 플라스크로 보내기
+             // 회원가입 플라스크로 보내기
             $.ajax({
                 type: "POST",
                 url: "/signup",
@@ -133,6 +133,29 @@
                 }
             });
         }
+        // 아이디 중복확인 alert 띄우기
+        function checkId() {
+            let id = $("#signup-id").val();
+
+            console.log(id);
+
+            $.ajax({
+                type: "POST",
+                url: "/check-id",
+                data: {
+                    id: id
+                },
+                success: function (response) {
+                    if (response["result"] == "fail") {
+                        alert(response["msg"]);
+                    }
+                    else if (response["result"] == "success") {
+                        alert(response["msg"]);
+                    }
+                }
+            });
+        }
+
     </script>
 </body>
 </html>
