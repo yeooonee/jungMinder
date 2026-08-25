@@ -5,13 +5,10 @@ import os
 import boto3
 from ref.config import Config
 from PIL import Image
+from ref.database import db
 
 # app.py 와 연결
 file_bp = Blueprint('file', __name__, url_prefix='/file')
-
-client = MongoClient('localhost',27017)
-db = client.dbjungminder
-
 
 s3 = boto3.client(service_name='s3', 
                   region_name = Config.S3_REGION,

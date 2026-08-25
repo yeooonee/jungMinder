@@ -1,12 +1,9 @@
 from flask import Blueprint, Flask, render_template, request, jsonify
 from pymongo import MongoClient
+from ref.database import db
 
 # app.py 와 연결
 studylogs_bp = Blueprint('studylogs', __name__, url_prefix='/studylogs')
-
-client = MongoClient('localhost',27017)
-db = client.dbjungminder
-
 
 # studylog 생성
 @studylogs_bp.route('/create', methods=['POST'])
