@@ -22,16 +22,15 @@ s3 = boto3.client(service_name='s3',
 def file_upload():
     file = request.files['image']
     
-    # 이미지 사이즈 검사
-    file_size_bytes = os.path.getsize(file)
-    file_size_kb = file_size_bytes / 1024
-    if file_size_kb > 500 :
-        return {'error':'업로드 실패: 파일 크기는 최대 5MB까지 지원합니다.'}, 500
+    # 이미지 용량 검사
+    content_length = request.content_length
+    if content_length and content_length > 5 * 1024 * 1024 :
+        return {'error':'업로드 실패: 파일 크기는 최대 5MB까지 지원합니다.'}, 413
     
-    # 파일 타입 검사
+    # 이미지 타입 검사
+    file_type = os.path.splitext(file.filename)[1] # 기존 파일 타입 추출
     if file_type not in ('.jpg','.png','.jpeg'):
         return {'error': file_type + '은 지원하는 이미지 파일이 아닙니다.'}, 500
-    file_type = os.path.splitext(file.filename)[1] # 기존 파일 타입 추출
 
     # 파일명 변경
     current_time = datetime.now()
@@ -46,7 +45,6 @@ def file_upload():
         return {'error':str(e)}, 500
     
     img_url = new_file_name
-
     return jsonify({'result':'success','img_url':img_url})
 
 
