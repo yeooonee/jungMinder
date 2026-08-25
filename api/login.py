@@ -37,6 +37,21 @@ def create_user():
 
    return"사용자 생성 완료"
 
+@app.route('/signup', methods=['POST'])
+def signup():
+   print(request.form)
+
+   #비밀번호 중복확인
+   pw = request.form['pw']
+   pw_confirm = request.form['pw_confirm']
+   if pw != pw_confirm:
+      return jsonify({
+         "result": "fail",
+         "msg": "비밀번호가 일치하지 않습니다."
+      })
+
+   return jsonify({"result": "success"})
+
 #로그인
 @app.route('/login', methods=['POST'])
 def login():

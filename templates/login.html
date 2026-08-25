@@ -28,6 +28,13 @@
             </h2>
 
             <input
+                id="signup-name"
+                type="text"
+                placeholder="이름"
+                class="border p-2 w-full mb-4"
+            >
+
+            <input
                 id="signup-id"
                 type="text"
                 placeholder="아이디"
@@ -52,7 +59,7 @@
                 class="border p-2 w-full mb-4"
             >
 
-            <button class="border px-4 py-2">
+            <button class="border px-4 py-2" onclick="signup()">
                 회원가입
             </button>
 
@@ -64,6 +71,7 @@
     </div>
 
     <script>
+        // 로그인 함수
         function login() {
             let id = $("#login-id").val()
             let pw = $("#login-pw").val()
@@ -88,12 +96,42 @@
             });
         }
 
+        // 회원가입 팝업창을 회원가입 버튼 누를때만 보이게 하는 함수
         function openSignup() {
             $("#signup-popup").removeClass("hidden");
         }
 
         function classSignup() {
             $("#signup-popup").addClass("hidden");
+        }
+        // 회원가입 함수
+        function signup() {
+            let name = $("#signup-name").val();
+            let id = $("#signup-id").val();
+            let pw = $("#signup-pw").val();
+            let pwConfirm = $("#signup-pw-confirm").val()
+
+            console.log(name);
+            console.log(id);
+            console.log(pw);
+            console.log(pwConfirm);
+
+            // 플라스크로 보내기
+            $.ajax({
+                type: "POST",
+                url: "/signup",
+                data: {
+                    name: name,
+                    id: id,
+                    pw: pw,
+                    pw_confirm: pwConfirm
+                },
+                success: function (response) {
+                    if (response["result"] == "fail") {
+                        alert(response["msg"]);
+                    }
+                }
+            });
         }
     </script>
 </body>
