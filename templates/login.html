@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <input id="login-id" type="text" placeholder="아이디">
+    <input id="login-pw" type="password" placeholder="비밀번호">
+
+    <button class = "border px-4 py-2" onclick="openSignup()">
+        회원가입
+    </button>
+
+    <button class="border px-4 py-2" onclick="login()">
+        로그인
+    </button>
+
+    <div id="signup-popup" class="hidden fixed inset-0 flex items-center justify-center bg-black/50" >
+        <div class="bg-white p-6 rounded-lg w-80">
+
+            <h2 class="text-x1 font-bold mb-4">
+                회원가입
+            </h2>
+
+            <input
+                id="signup-id"
+                type="text"
+                placeholder="아이디"
+                class="border px-2 py-1 mb-2"
+            >
+
+            <button class="border px-2 py-1 mb-3">
+                중복확인
+            </button>
+
+            <input
+                id="signup-pw"
+                type="password"
+                placeholder="비밀번호"
+                class="border p-2 w-full mb-4"
+            >
+
+            <input
+                id="signup-pw-confirm"
+                type="password"
+                placeholder="비밀번호 확인"
+                class="border p-2 w-full mb-4"
+            >
+
+            <button class="border px-4 py-2">
+                회원가입
+            </button>
+
+            <button class="border px-4 py-2" onclick="classSignup()">
+                닫기
+            </button>
+
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            let id = $("#login-id").val()
+            let pw = $("#login-pw").val()
+
+            console.log("보내기 직전ID", id);
+            console.log("보내기 직전PW", pw);
+
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                data: {
+                    id: id,
+                    pw: pw
+                },
+                success: function (response) {
+                    if (response["result"] == "fail") {
+                        alert(response["msg"]);
+                    } else if (response["result"] == "success") {
+                        window.location = "/main"
+                    }
+                }
+            });
+        }
+
+        function openSignup() {
+            $("#signup-popup").removeClass("hidden");
+        }
+
+        function classSignup() {
+            $("#signup-popup").addClass("hidden");
+        }
+    </script>
+</body>
+</html>
