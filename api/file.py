@@ -5,13 +5,10 @@ import os
 import boto3
 from ref.config import Config
 from PIL import Image
+from ref.database import db
 
 # app.py 와 연결
 file_bp = Blueprint('file', __name__, url_prefix='/file')
-
-client = MongoClient('localhost',27017)
-db = client.dbjungminder
-
 
 s3 = boto3.client(service_name='s3', 
                   region_name = Config.S3_REGION,
@@ -64,6 +61,14 @@ def image_read():
     #                   region_name = Config.S3_REGION)
     response = s3.get_object(Bucket=Config.S3_BUCKET, Key=filename)
     location = s3.get_bucket_location(Bucket=Config.S3_BUCKET)["LocationConstraint"]
+    
+    # 임시 전체 허용 경로
+    url = s3.generate_presigned_url(
+       'get_object',
+       Params={'Bucket': Config.S3_BUCKET, 'Key': filename},
+       ExpiresIn=3600  # 1시간 유효
+   )
     # img = Image.open(response['Body'])
-    return f"https://{Config.S3_BUCKET}.s3.{location}.amazonaws.com/{filename}"
+    # return f"https://{Config.S3_BUCKET}.s3.{location}.amazonaws.com/{filename}"
+    return url
     

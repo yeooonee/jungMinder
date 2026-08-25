@@ -6,10 +6,7 @@ from api.studylog import *
 from api.review import *
 from api.file import *
 
-from pymongo import MongoClient
-
-client = MongoClient('localhost',27017)
-db = client.dbjungminder
+from ref.database import db
 
 app = Flask(__name__)
 

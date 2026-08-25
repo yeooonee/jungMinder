@@ -8,4 +8,5 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
     S3_BUCKET = os.getenv('S3_BUCKET')
     S3_REGION = os.getenv('S3_REGION')
+    MONGO_URI = os.getenv('MONGO_URI')
     
