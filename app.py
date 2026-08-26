@@ -6,13 +6,7 @@ from api.studylog import *
 from api.review import *
 from api.file import *
 
-from pymongo import MongoClient
-
-from api.file import file_bp # 파일 위치에 맞게 임포트
-app.register_blueprint(file_bp)
-
-client = MongoClient('localhost',27017)
-db = client.dbjungminder
+from ref.database import db
 
 app = Flask(__name__)
 
