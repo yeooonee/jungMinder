@@ -42,8 +42,8 @@ def studylogs_create():
 @studylogs_bp.route('/view/<id>', methods=['GET'])
 def studylogs_view(id):
     #테스트용으로 임의로 넣은 로그인정보
-    user_id = 'test1234'
-    #user_id = session['user_id']
+    #user_id = 'test1234'
+    user_id = session['user_id']
 
     studylog = db.studylogs.find_one({
         '_id': ObjectId(id),
@@ -63,8 +63,8 @@ def studylogs_view(id):
 @studylogs_bp.route('/create/<id>', methods=['GET'])
 def studylogs_create_edit(id):
     #테스트용으로 임의로 넣은 로그인정보
-    user_id = 'test1234'
-    #user_id = session['user_id']
+    #user_id = 'test1234'
+    user_id = session['user_id']
 
     studylog = db.studylogs.find_one({
         '_id': ObjectId(id),
@@ -112,12 +112,24 @@ def studylogs_update(id):
     })
 
 # studylog 삭제
-#@studylogs_bp.route('/delete/<id>', methods=['POST'])
-#def studylogs_delete(id):
+@studylogs_bp.route('/delete/<id>', methods=['POST'])
+def studylogs_delete(id):
     #테스트용으로 임의로 넣은 로그인정보
-#    user_id = 'test1234'
-    #user_id = session['user_id']
+    #user_id = 'test1234'
+    user_id = session['user_id']
 
-#    result = db.studylogs.delete_one({
+    result = db.studylogs.delete_one({
+        '_id': ObjectId(id),
+        'reg_id': user_id
+    })
 
-#    })
+    if result.deleted_count == 0:
+        return jsonify({
+            'result': 'fail',
+            'msg': '학습일지를 찾을 수 없습니다.'
+        })
+
+    return jsonify({
+        'result': 'success',
+        'msg': '학습일지가 삭제되었습니다.'
+    })
