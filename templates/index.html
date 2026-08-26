@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JungMinder</title>
+    
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -25,6 +29,7 @@
         .site-header h1 {
             margin: 20px;
             margin-top: 10px;
+            cursor: pointer;
         }
 
         .user-section {
@@ -68,7 +73,8 @@
             margin-bottom: 40px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
+            gap: 20px;
             padding-left: 60px;
             padding-right: 60px;
             box-sizing: border-box;
@@ -85,12 +91,18 @@
             justify-content: center;
             align-items: center;
             color: #333;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             text-decoration: none;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             transition: background-color 0.2s, transform 0.2s;
             flex-shrink: 0;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .circle-btn:hover {
@@ -135,7 +147,6 @@
         /* 3. 학습 기록 카드들을 아래로 내리기 위한 전체 감싸는 영역 */
         .card-container {
             margin-top: 60px;
-            /* 이 값을 키우면 카드들이 더 아래로 내려갑니다 */
         }
 
         /* 학습 기록 카드 스타일 */
@@ -151,6 +162,11 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            cursor: pointer;
+        }
+
+        .restudy-card:hover {
+            opacity: 0.95;
         }
 
         .log-row {
@@ -166,6 +182,7 @@
             min-width: 50px;
         }
 
+        /* 칸을 벗어나지 않고 텍스트만 깔끔하게 ... 처리하는 설정 */
         .log-content-box {
             flex: 1;
             background-color: #ffffff;
@@ -173,6 +190,9 @@
             border-radius: 35px;
             font-size: 18px;
             color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .hashtag-area {
@@ -190,7 +210,6 @@
             align-items: center;
             gap: 15px;
             margin-top: 100px;
-            /* 카드들과의 간격 조절 */
             margin-bottom: 30px;
             font-size: 20px;
             font-weight: bold;
@@ -201,10 +220,12 @@
             text-decoration: none;
             color: #333;
             padding: 5px 10px;
+            cursor: pointer;
         }
 
         .pagination a.active {
-            color: #000;
+            color: #008000;
+            border-bottom: 2px solid #008000;
         }
 
         .pagination .arrow {
@@ -215,92 +236,217 @@
 </head>
 
 <body>
-    <!-- 헤더 위치 원래대로 복원 -->
+    <!-- 헤더 영역 (로그인한 사용자 이름 반영 및 로그아웃 버튼 포함) -->
     <header class="site-header">
-        <h1>JungMinder</h1>
+        <h1 onclick="location.reload()">JungMinder</h1>
         <div class="user-section">
-            <span class="user-name">홍길동</span>
+            <span class="user-name">{{ user_name }}</span>
             <button type="button" class="logout-btn" id="logoutButton">로그아웃</button>
         </div>
     </header>
 
-    <!-- 상단 동그라미 버튼 박스 (GET /review/list 연결) -->
-    <div class="rect">
-        <a href="" class="circle-btn">파이썬</a>
-        <a href="" class="circle-btn">알고리즘</a>
-        <a href="" class="circle-btn">운영체제</a>
-        <a href="" class="circle-btn">LLM</a>
-        <a href="" class="circle-btn">딥러닝</a>
-        <a href="" class="circle-btn">C</a>
-        <a href="" class="circle-btn">자바</a>
+    <!-- 상단 동그라미 버튼 박스 (항상 전체 데이터 유지) -->
+    <div class="rect" id="circleContainer">
+        <!-- 자바스크립트에 의해 동그라미 버튼들이 생성됩니다 -->
     </div>
 
-    <!-- 검색창 -->
+    <!-- 검색창 및 새 글쓰기 버튼 -->
     <div class="search-container">
-        <form class="search-box" action="/search" method="get">
-            <input type="search" name="q" placeholder="검색어를 입력하세요" required>
-            <button type="submit">검색</button>
-        </form>
-    </div>
-
-    <!-- 카드들을 아래로 내리기 위한 컨테이너 영역 시작 -->
-    <div class="card-container">
-        <!-- 학습 기록 카드 1 -->
-        <div class="restudy-card">
-            <div class="log-row">
-                <span class="log-label">제목</span>
-                <div class="log-content-box">파이썬</div>
-            </div>
-            <div class="log-row">
-                <span class="log-label">내용</span>
-                <div class="log-content-box">파이썬은....</div>
-            </div>
-            <div class="hashtag-area">
-                <span>#</span>
-                <span>#</span>
-                <span>#</span>
-            </div>
-        </div>
-
-        <!-- 학습 기록 카드 2 -->
-        <div class="restudy-card">
-            <div class="log-row">
-                <span class="log-label">제목</span>
-                <div class="log-content-box">알고리즘</div>
-            </div>
-            <div class="log-row">
-                <span class="log-label">내용</span>
-                <div class="log-content-box">알고리즘은....</div>
-            </div>
-            <div class="hashtag-area">
-                <span>#</span>
-                <span>#</span>
-                <span>#</span>
-            </div>
+        <div class="search-box">
+            <input type="search" id="searchInput" placeholder="검색어를 입력하세요">
+            <button type="button" id="searchBtn">검색</button>
+            <button type="button" onclick="location.href='/studylog/lookup'" style="background-color: #008000; color: #fff; border: none; border-radius: 4px; padding: 0 30px; font-size: 18px; cursor: pointer; white-space: nowrap;">새 글쓰기</button>
         </div>
     </div>
-    <!-- 카드 컨테이너 끝 -->
 
-    <!-- 페이지네이션 번호 -->
-    <div class="pagination">
-        <span class="arrow">&lt;</span>
-        <a href="#" class="active">1</a>
-        <a href="#">2</a>
-        <a href="#">3</a>
-        <a href="#">4</a>
-        <a href="#">5</a>
-        <a href="#">6</a>
-        <a href="#">7</a>
-        <a href="#">8</a>
-        <a href="#">9</a>
-        <a href="#">10</a>
-        <span>11</span>
-        <span class="arrow">&gt;</span>
+    <!-- DB 데이터를 받아와 전체 카드가 동적으로 생성될 컨테이너 영역 -->
+    <div class="card-container" id="cardContainer">
+        <!-- 자바스크립트에 의해 카드가 동적으로 채워집니다 -->
     </div>
 
-    <script>
-       
+    <!-- 페이지네이션 번호 (동적 생성) -->
+    <div class="pagination" id="paginationContainer">
+        <!-- 자바스크립트에 의해 페이지 번호가 동적으로 생성됩니다 -->
+    </div>
+
+    <script>     
+        let allLogs = []; // 서버에서 받아온 전체 데이터
+        let filteredLogs = []; // 검색어로 필터링된 데이터
+        let currentPage = 1; // 현재 페이지 번호
+        const itemsPerPage = 2; // 페이지당 보여줄 카드 개수 (2장)
+
+        // HTML 태그와 이미지 태그를 제거하고 순수 텍스트 본문만 추출하는 함수
+        function removeTags(html) {
+            let tmp = document.createElement("DIV");
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || "";
+        }
+
+        // 페이지가 로드되자마자 GET 방식으로 /review/list 데이터를 호출
+        $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "/review/list",
+                data: {},
+                success: function(response) {
+                    if (response.result === "success") {
+                        allLogs = response.reveiw_studylogs || [];
+                        filteredLogs = allLogs; // 처음에는 전체 데이터로 초기화
+                        
+                        // 1. 상단 동그라미 버튼은 전체 데이터 기준으로 딱 한 번 고정 생성
+                        renderCircles();
+                        
+                        // 2. 하단 카드 및 페이지네이션 렌더링
+                        renderCardsAndPagination();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
+                }
+            });
+
+            // 검색 버튼 클릭 시 필터링 실행
+            $('#searchBtn').on('click', function() {
+                filterData();
+            });
+
+            // 검색창에 글자가 입력될 때마다 실시간 체크 (백스페이스 등으로 빈칸이 되면 자동 복원)
+            $('#searchInput').on('input', function() {
+                filterData();
+            });
+
+            // 엔터키를 쳤을 때 검색 실행
+            $('#searchInput').on('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    filterData();
+                }
+            });
+
+            // 로그아웃 버튼 이벤트 연동
+            $('#logoutButton').on('click', function() {
+                $.ajax({
+                    type: "POST",
+                    url: "/logout",
+                    success: function(response) {
+                        alert(response["msg"] || "로그아웃되었습니다.");
+                        window.location.replace("/");
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("로그아웃 에러:", error);
+                        alert("로그아웃 중 오류가 발생했습니다.");
+                    }
+                });
+            });
+        });
+
+        // 상단 동그라미 버튼을 그려주는 함수 (항상 전체 항목 유지)
+        function renderCircles() {
+            let circleContainer = $('#circleContainer');
+            circleContainer.empty();
+
+            if (allLogs.length === 0) {
+                circleContainer.append('<span style="padding-left: 20px; color: #333; font-size: 18px;">저장된 주제가 없습니다.</span>');
+                return;
+            }
+
+            for (let i = 0; i < allLogs.length; i++) {
+                let log = allLogs[i];
+                let circleHtml = `
+                    <a href="/studylog/lookup?id=${log._id}" class="circle-btn" title="${log.title}">
+                        ${log.title}
+                    </a>
+                `;
+                circleContainer.append(circleHtml);
+            }
+        }
+
+        // 검색어에 맞춰 데이터 필터링 후 카드 갱신
+        function filterData() {
+            let keyword = $('#searchInput').val().trim().toLowerCase();
+
+            if (keyword === "") {
+                filteredLogs = allLogs; // 검색어가 비어있으면 전체 데이터 복원
+            } else {
+                // title이나 content에 검색어가 포함된 항목만 추리기
+                filteredLogs = allLogs.filter(log => {
+                    let title = (log.title || "").toLowerCase();
+                    let content = removeTags(log.content || "").toLowerCase();
+                    return title.includes(keyword) || content.includes(keyword);
+                });
+            }
+
+            currentPage = 1; 
+            renderCardsAndPagination();
+        }
+
+        // 하단 카드와 페이지네이션을 그려주는 함수
+        function renderCardsAndPagination() {
+            let cardContainer = $('#cardContainer');
+            let paginationContainer = $('#paginationContainer');
+            
+            cardContainer.empty();
+            paginationContainer.empty();
+
+            if (filteredLogs.length === 0) {
+                cardContainer.append('<div style="text-align: center; font-size: 20px; color: #666; margin-top: 40px;">검색 결과가 없습니다.</div>');
+                return;
+            }
+
+            // 현재 페이지 기준 2개씩 자르기
+            let startIndex = (currentPage - 1) * itemsPerPage;
+            let endIndex = startIndex + itemsPerPage;
+            let paginatedLogs = filteredLogs.slice(startIndex, endIndex);
+
+            // 하단 카드 생성
+            for (let i = 0; i < paginatedLogs.length; i++) {
+                let log = paginatedLogs[i];
+                let cleanContent = removeTags(log.content);
+                
+                let cardHtml = `
+                    <div class="restudy-card" onclick="location.href='/studylog/lookup?id=${log._id}'">
+                        <div class="log-row">
+                            <span class="log-label">제목</span>
+                            <div class="log-content-box">${log.title}</div>
+                        </div>
+                        <div class="log-row">
+                            <span class="log-label">내용</span>
+                            <div class="log-content-box">${cleanContent}</div>
+                        </div>
+                        <div class="hashtag-area">
+                            <span>#학습기록</span>
+                            <span>#복습</span>
+                        </div>
+                    </div>
+                `;
+                cardContainer.append(cardHtml);
+            }
+
+            // 페이지네이션 번호 생성
+            let totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+            if (totalPages > 1) {
+                let paginationHtml = `<span class="arrow" onclick="changePage(${currentPage - 1})">&lt;</span>`;
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    let activeClass = (i === currentPage) ? 'active' : '';
+                    paginationHtml += `<a href="javascript:void(0);" class="${activeClass}" onclick="changePage(${i})">${i}</a>`;
+                }
+                
+                paginationHtml += `<span class="arrow" onclick="changePage(${currentPage + 1})">&gt;</span>`;
+                paginationContainer.append(paginationHtml);
+            }
+        }
+
+        // 페이지 번호 변경 함수
+        function changePage(page) {
+            let totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+            if (page < 1 || page > totalPages) {
+                return;
+            }
+            currentPage = page;
+            renderCardsAndPagination();
+            window.scrollTo(0, 0);
+        }
     </script>
-
 </body>
 </html>

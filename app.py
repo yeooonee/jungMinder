@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for, redirect
 from ref.config import Config
 # api 파일 import
 from api.login import *
@@ -22,8 +22,9 @@ def home():
 
 @app.route('/studylogcreate')
 def studylogcreate():
-    print(session)
-    return render_template('studylogcreate.html', user_name=session.get('user_name'))
+    if 'user_id' in session:
+        return render_template('studylogcreate.html', user_name=session.get('user_name'))
+    return redirect(url_for('home'))
 
 # api/*.py 등록
 app.register_blueprint(login_bp)
