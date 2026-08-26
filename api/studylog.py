@@ -49,7 +49,7 @@ def studylogs_list():
     paginated_results = get_paginated_list(results, page)
     print(paginated_results)
     
-    return jsonify({'result':'success', 'results':paginated_results})
+    return jsonify({'result':'success', 'results':paginated_results, 'total_count':len(results), 'current_page':page})
 
 # 3. studylog 생성 라우터 (POST /studylogs/create)
 @studylogs_bp.route('/create', methods=['POST'])
