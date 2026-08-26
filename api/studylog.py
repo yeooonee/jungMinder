@@ -27,7 +27,7 @@ def studylogs_list():
     
     # 검색어가 있을 때 검색조건 추가 
     query = {'reg_id': user_id}
-    if request.form.get('searchword'):
+    if request.args.get('searchword'):
         searchword = request.args.get('searchword')
         query['$or'] = [
             {'title':{"$regex":searchword}},
