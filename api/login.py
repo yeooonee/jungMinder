@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 login_bp = Blueprint('login', __name__)
 
 
-@login_bp.route('/')
+@login_bp.route('/login')
 def home():
    return render_template('login.html')
 
