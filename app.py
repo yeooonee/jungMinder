@@ -13,15 +13,18 @@ app = Flask(__name__)
 # .env 내용 불러오기
 app.config.from_object(Config)
 
+#flask session용 비밀번호 암호화
+app.secret_key = "test-secret-key"
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('login.html')
 
 # api/*.py 등록
+app.register_blueprint(login_bp)
 app.register_blueprint(studylogs_bp)
 app.register_blueprint(file_bp)
 app.register_blueprint(review_bp)
-
 
 
 if __name__ == '__main__':
