@@ -41,8 +41,6 @@ def studylogs_create():
 # studylog 조회
 @studylogs_bp.route('/view/<id>', methods=['GET'])
 def studylogs_view(id):
-    #테스트용으로 임의로 넣은 로그인정보
-    #user_id = 'test1234'
     user_id = session['user_id']
 
     studylog = db.studylogs.find_one({
@@ -62,8 +60,6 @@ def studylogs_view(id):
 # studylog 수정 화면
 @studylogs_bp.route('/create/<id>', methods=['GET'])
 def studylogs_create_edit(id):
-    #테스트용으로 임의로 넣은 로그인정보
-    #user_id = 'test1234'
     user_id = session['user_id']
 
     studylog = db.studylogs.find_one({
@@ -114,8 +110,6 @@ def studylogs_update(id):
 # studylog 삭제
 @studylogs_bp.route('/delete/<id>', methods=['POST'])
 def studylogs_delete(id):
-    #테스트용으로 임의로 넣은 로그인정보
-    #user_id = 'test1234'
     user_id = session['user_id']
 
     result = db.studylogs.delete_one({
