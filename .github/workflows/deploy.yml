@@ -1,0 +1,24 @@
+name: Deploy to EC2
+
+on:
+  workflow_dispatch: # 수동 실행 버튼
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/reminder
+            git pull origin main
+            source ~/.venv/bin/activate
+            pip install -r requirements.txt
+            pkill -f "python app.py" || true
+            sleep 2
+            nohup python app.py > app.log 2>&1 &
+            disown
