@@ -127,7 +127,7 @@
     </header>
 
     <div id="line">
-        <input type="text" id="studylog" name="docname" placeholder="제목을 입력하세요." />
+        <input type="text" id="studylog" name="docname" placeholder="제목을 입력하세요." value="{{ studylog.title if studylog else '' }}"/> <!-- *수정버튼을 통해 들어왔을때 기존 내용 자동 반영 -->
 
         <!-- 에디터 영역 -->
         <div id="editor" style="margin: 20px;"></div>
@@ -206,7 +206,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/studylogs/create",
+                url: "{{ '/studylogs/update/' + studylog._id|string if studylog else '/studylogs/create' }}", <!--수정화면에서 저장했을 때 새 문서 생성하지 않고 기존 문서 수정을 구현하기 위해 추가-->
                 data: {
                     title: title,
                     content: content
