@@ -90,6 +90,9 @@ def studylogs_view(id):
         'reg_id': user_id
     })
     
+    if studylog is None:
+        return '학습일지를 찾을 수 없습니다.', 404
+
     # content img intercept
     content = studylog['content']
     
@@ -107,9 +110,6 @@ def studylogs_view(id):
     print(content)
     
     studylog['content'] = content
-        
-    if studylog is None:
-        return '학습일지를 찾을 수 없습니다.', 404
 
     #ssr
     return render_template(
