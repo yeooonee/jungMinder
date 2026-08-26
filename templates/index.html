@@ -405,8 +405,7 @@
                             <div class="log-content-box">${cleanContent}</div>
                         </div>
                         <div class="hashtag-area">
-                            <span>#학습기록</span>
-                            <span>#복습</span>
+                            ${(log.tags || []).map(tag => `<span>${tag}</span>`).join('')}
                         </div>
                     </div>
                 `;
