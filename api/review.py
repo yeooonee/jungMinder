@@ -1,4 +1,4 @@
-from flask import Blueprint, Flask, render_template, request, jsonify
+from flask import Blueprint, Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
 from datetime import datetime
 import os
@@ -9,6 +9,7 @@ from ref.database import db
 from bson.objectid import ObjectId
 from datetime import datetime
 import json
+
 
 # app.py 와 연결
 review_bp = Blueprint('review', __name__, url_prefix='/review')
@@ -100,6 +101,7 @@ def review_complete():
 @review_bp.route('/list', methods=['GET'])
 def review_studylog_list():
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    user_id = session.get('user_id')
     
     # select _id, title from studylogs s 
     # where s.review_date + s.interval > today mongodb
@@ -110,7 +112,8 @@ def review_studylog_list():
             }
         }},
         {"$match": {
-            "review_date_chk": {"$lte":today}
+            "review_date_chk": {"$lte":today},
+            "reg_id": user_id
         }},
         {"$sort": { "review_date_chk": 1}}
     ]))
