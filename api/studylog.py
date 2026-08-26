@@ -1,4 +1,4 @@
-from flask import Blueprint, Flask, render_template, request, jsonify
+from flask import Blueprint, Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
 from ref.database import db
 from datetime import datetime
@@ -11,10 +11,8 @@ studylogs_bp = Blueprint('studylogs', __name__, url_prefix='/studylogs')
 def studylogs_create():
     title = request.form['title']
     content = request.form['content']
-    reg_id = request.form['regId']
-    reg_dt = request.form['regDt']
-    mod_dt = request.form['modDt']
-    
+    reg_id = session.get('user_id')
+        
     studylogs = {
         'title' : title,
         'content' : content,
@@ -30,6 +28,6 @@ def studylogs_create():
     db.studylogs.insert_one(studylogs)
     
     return jsonify({
-    'result': 'success', 
-    'msg': '학습일지가 성공적으로 저장되었습니다!'
+        'result': 'success', 
+        'msg': '학습일지가 성공적으로 저장되었습니다!'
 })
