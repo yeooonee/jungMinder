@@ -68,11 +68,13 @@
                 </a>
                 <button type="button" id="deleteButton" class="bg-green-500 text-gray-900 font-bold px-6 py-2.5 rounded-lg hover:bg-green-600 transition cursor-pointer text-base">삭제</button>
             </div>
+          
+              <!--목록으로 버튼-->
+            <button type="button" onclick="location.href='/main'">목록으로</button>
 
         </div>
 
     </div>
-
     <script>
         document.getElementById('deleteButton').addEventListener('click', function() {
 
@@ -88,7 +90,7 @@
 
                 if (result.result === "success") {
                     alert(result.msg);
-                    window.location.replace("/");
+                    window.location.replace("/main");
                 } else {
                     alert(result.msg);
                 }
@@ -138,12 +140,8 @@
                 reviewDate: reviewDate
             },
             success: function(response) {
-
-                if (response.result === "success") {
-                    alert(response.msg);
-                } else {
-                    alert(response.msg);
-                }
+                alert(response.msg)
+                window.location.replace("/main");
             },
             error: function(xhr, status, error) {
                 console.error("복습완료 API 오류:", error);
