@@ -20,6 +20,10 @@ app.secret_key = "test-secret-key"
 def home():
     return render_template('login.html')
 
+@app.route('/studylogcreate')
+def studylogcreate():
+    return render_template('studylogcreate.html')
+
 # api/*.py 등록
 app.register_blueprint(login_bp)
 app.register_blueprint(studylogs_bp)
