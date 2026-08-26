@@ -9,7 +9,7 @@ from api.file import img_presigned_url
 from bs4 import BeautifulSoup
 import re
 
-# app.py 와 연결
+# app.py와 연결되는 블루프린트 설정 (url_prefix가 /studylogs 임)
 studylogs_bp = Blueprint('studylogs', __name__, url_prefix='/studylogs')
 
 
@@ -51,7 +51,7 @@ def studylogs_list():
     
     return jsonify({'result':'success', 'results':paginated_results})
 
-# studylog 생성
+# 3. studylog 생성 라우터 (POST /studylogs/create)
 @studylogs_bp.route('/create', methods=['POST'])
 def studylogs_create():
     title = request.form['title']
