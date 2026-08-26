@@ -133,12 +133,8 @@
                 reviewDate: reviewDate
             },
             success: function(response) {
-
-                if (response.result === "success") {
-                    alert(response.msg);
-                } else {
-                    alert(response.msg);
-                }
+                alert(response.msg)
+                window.location.replace("/main");
             },
             error: function(xhr, status, error) {
                 console.error("복습완료 API 오류:", error);
