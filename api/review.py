@@ -48,6 +48,8 @@ def sm2_algorithm(quality: int, repetitions: int, previous_interval: int, easine
     #                 'interval':interval, 
     #                 'easiness_factor':round(easiness_factor,2)})
 
+
+
 # 복습완료 API
 @review_bp.route('/complete', methods=['POST'])
 def review_complete():
@@ -82,6 +84,12 @@ def review_complete():
     easiness_factor = result[2]
     
     # DB에 알고리즘 값 업데이트
-    db.studylogs.update_one({'_id':ObjectId(studylog_id)},{'$set':{'repetitions':repetitions, 'interval':interval, 'easiness_factor':easiness_factor}})
+    db.studylogs.update_one({'_id':ObjectId(studylog_id)},{'$set':{'repetitions':repetitions, 'interval':interval, 'easiness_factor':easiness_factor,'review_date':review_date}})
     
     return jsonify({'result':"success", 'msg':'복습주기가 업데이트 되었습니다!'}) 
+
+
+# 복습주기 된 학습기록 노출
+def review_studylog_list():
+    
+    return jsonify({'result':'success'})
