@@ -71,6 +71,7 @@ def login():
       })
 
    session['user_id'] = id
+   session['user_name'] = user["name"]
 
    return jsonify({"result": "success"})
 
@@ -103,9 +104,9 @@ def logout():
    })
 
 
-
+# session 디코딩
 @login_bp.route('/check-session')
 def check_session():
-   return jsonify({"user_id": session.get('user_id')})
+   return jsonify({"user_id": session.get('user_id'), "user_name": session.get('user_name')})
 
 

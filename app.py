@@ -22,7 +22,8 @@ def home():
 
 @app.route('/studylogcreate')
 def studylogcreate():
-    return render_template('studylogcreate.html')
+    print(session)
+    return render_template('studylogcreate.html', user_name=session.get('user_name'))
 
 # api/*.py 등록
 app.register_blueprint(login_bp)
