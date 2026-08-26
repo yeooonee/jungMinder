@@ -14,8 +14,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
             cd ~/reminder
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             source ~/.venv/bin/activate
             pip install -r requirements.txt
             pkill -f "python app.py" || true
