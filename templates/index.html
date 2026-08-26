@@ -395,7 +395,7 @@
                 let cleanContent = removeTags(log.content);
                 
                 let cardHtml = `
-                    <div class="restudy-card" onclick="location.href='/studylog/lookup?id=${log._id}'">
+                    <div class="restudy-card" onclick="location.href='/studylogs/view/${log._id}'">
                         <div class="log-row">
                             <span class="log-label">제목</span>
                             <div class="log-content-box">${log.title}</div>
