@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 
+    <link rel="stylesheet" href="/static/css/common.css">
+
+
     <style>
         .site-header {
             display: flex;
@@ -105,6 +108,13 @@
             background-color: #008000;
             color: white;
         }
+
+        /* 에디터 내부의 이미지 최대 너비 지정 */
+        .toastui-editor-contents img {
+            max-width: 500px; /* 원하는 크기로 수정 */
+            width: 100%;       /* 반응형으로 설정할 경우 */
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -122,12 +132,6 @@
         <!-- 에디터 영역 -->
         <div id="editor" style="margin: 20px;"></div>
 
-        <div class="meta-info">
-            <span><strong>작성자:</strong> <span id="regIdText">홍길동</span></span>
-            <span><strong>등록일자:</strong> <span id="regDt"></span></span>
-            <span><strong>수정일자:</strong> <span id="modDt">없음</span></span>
-        </div>
-
         <div class="button-group">
             <button type="button" id="saveButton">저장</button>
             <button type="button" id="cancelButton">취소</button>
@@ -143,7 +147,7 @@
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');
-            document.getElementById('regDt').textContent = `${year}-${month}-${day}`;
+            // document.getElementById('regDt').textContent = `${year}-${month}-${day}`;
 
             // Toast UI Editor 초기화 (S3 업로드 연동)
             editor = new toastui.Editor({
@@ -189,9 +193,9 @@
         document.getElementById('saveButton').addEventListener('click', function() {
             let title = document.getElementById('studylog').value;
             let content = editor.getHTML();
-            let regId = document.getElementById('regIdText').innerText;
-            let regDt = document.getElementById('regDt').innerText;
-            let modDt = document.getElementById('modDt').innerText;
+            // let regId = document.getElementById('regIdText').innerText;
+            // let regDt = document.getElementById('regDt').innerText;
+            // let modDt = document.getElementById('modDt').innerText;
 
             if (!title.trim()) {
                 alert("제목을 입력해주세요.");
@@ -199,17 +203,13 @@
             }
 
             console.log("보내기 직전 제목", title);
-            console.log("보내기 직전 작성자", regId);
 
             $.ajax({
                 type: "POST",
                 url: "/studylogs/create",
                 data: {
                     title: title,
-                    content: content,
-                    regId: regId,
-                    regDt: regDt,
-                    modDt: modDt
+                    content: content
                 },
                 success: function (response) {
                     if (response["result"] === "fail") {
@@ -230,6 +230,19 @@
         document.getElementById('cancelButton').addEventListener('click', function() {
             window.location.href = "/";
         });
+
+        // 로그아웃
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            $.ajax({
+                type: "POST",
+                url: "/logout",
+                success: function(response) {
+                    alert(response["msg"])
+                    window.location.replace("/");
+                }
+            })
+        })
+
     </script>
 </body>
 </html>
