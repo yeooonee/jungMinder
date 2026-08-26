@@ -34,6 +34,26 @@
 
     <br>
 
+    <!--복습 날짜-->
+    <div>
+        <label for="reviewDate">복습 날짜</label>
+        <input type="date" id="reviewDate">
+    </div>
+
+    <br>
+
+    <!--복습 난이도-->
+    <div>
+        <label for="quality">복습 난이도</label>
+
+        <select id="quality">
+            <option value="">난이도선택</option>
+            <option value="easy">쉬움</option>
+            <option value="good">보통</option>
+            <option value="hard">어려움</option>
+        </select>
+    </div>
+
     <!--수정 버튼-->
     <a href="/studylogs/create/{{ studylog._id }}"
         <button type="button">수정</button>
@@ -66,6 +86,21 @@
                 alert("서버 통신 중 오류가 발생했습니다.");
             });            
         });
+
+        document.getElementById('reviewDate').addEventListener('change', function() {
+
+            const reviewDate = this.value;
+
+            console.log("선택한 복습 날짜:", reviewDate);
+        });
+
+        document.getElementById('quality').addEventListener('change', function(){
+
+            const quality = this.value;
+
+            console.log("선택한 난이도", quality);
+        });
+
     </script>
 
 </body>
