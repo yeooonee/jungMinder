@@ -76,6 +76,18 @@
             let id = $("#login-id").val()
             let pw = $("#login-pw").val()
 
+            // 아이디 입력 여부 확인
+            if (!id.trim()) {
+                alert("아이디를 입력해주세요.");
+                return;
+            }
+
+            // 비밀번호 입력 여부 확인
+            if (!pw.trim()) {
+                alert("비밀번호를 입력해주세요.");
+                return;
+            }
+
             console.log("보내기 직전ID", id);
             console.log("보내기 직전PW", pw);
 

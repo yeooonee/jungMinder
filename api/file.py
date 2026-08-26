@@ -56,7 +56,7 @@ def file_upload():
         return {'error':str(e)}, 500
     
     img_url = img_presigned_url(new_file_name)
-    return jsonify({'result':'success','file_name': new_file_name, 'img_url':img_url})
+    return jsonify({'result':'success','img_name': new_file_name, 'img_url':img_url})
 
 
 # 이미지 읽어오기
