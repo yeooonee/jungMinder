@@ -7,11 +7,49 @@ from bson import ObjectId
 import os
 from api.file import img_presigned_url
 from bs4 import BeautifulSoup
+import re
 
 # app.py 와 연결
 studylogs_bp = Blueprint('studylogs', __name__, url_prefix='/studylogs')
 
 
+# 페이지네이션 
+def get_paginated_list(data, page=1, page_size=2):
+    start = (page - 1) * page_size
+    end = start + page_size
+    return data[start:end]
+
+# studylog 목록 조회
+@studylogs_bp.route('/list', methods=['GET'])
+def studylogs_list():
+    page = request.args.get('page',1,type=int)
+    
+    # 검색어가 있을 때 검색조건 추가 
+    query = {}
+    if request.form.get('searchword'):
+        searchword = request.form['searchword']
+        query = {'$or': [
+                    {'title':{"$regex":searchword}},
+                    {'content':{"$regex":searchword}}
+                ]
+        }
+    results = list(db.studylogs.find(query))
+    
+    print(results)
+    
+    for n in results:
+        n['_id'] = str(n['_id'])
+        
+        # 태그 따로 빼기 
+        content = n['content']
+        tags = re.findall(r'#\S+', content)
+        n['tags'] = tags     
+
+    # 페이지네이션    
+    paginated_results = get_paginated_list(results, page)
+    print(paginated_results)
+    
+    return jsonify({'result':'success', 'results':paginated_results})
 
 # studylog 생성
 @studylogs_bp.route('/create', methods=['POST'])
@@ -62,8 +100,6 @@ def studylogs_view(id):
         print(new_img_url)
         n.attrs.update({'src':new_img_url})
         
-    
-    
     content = str(soup).replace('&amp;', '&')
     print(content)
     
