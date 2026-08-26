@@ -22,5 +22,5 @@ jobs:
             pip install -r requirements.txt
             pkill -f "python app.py" || true
             sleep 2
-            nohup python app.py > app.log 2>&1 < /dev/null &
+            setsid nohup python app.py > app.log 2>&1 < /dev/null &
             disown
