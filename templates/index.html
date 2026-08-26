@@ -1,1 +1,306 @@
-index.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JungMinder</title>
+    <style>
+        body {
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* 헤더 위치와 정렬 원래대로 유지 */
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #008000;
+            text-align: left;
+            font-size: 35px;
+            margin: 20px;
+        }
+
+        .site-header h1 {
+            margin: 20px;
+            margin-top: 10px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-right: 20px;
+        }
+
+        .user-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .logout-btn {
+            font-size: 20px;
+            padding: 8px 20px;
+            border: 2px solid #008000;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #008000;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #006600;
+        }
+
+        /* 1. 상단 연두색 박스 */
+        .rect {
+            margin: 0 auto;
+            width: 2000px;
+            max-width: 2400px;
+            height: 180px;
+            background-color: #99FF99;
+            border-radius: 20px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 60px;
+            padding-right: 60px;
+            box-sizing: border-box;
+            overflow-x: auto;
+        }
+
+        /* 동그라미 버튼 */
+        .circle-btn {
+            width: 130px;
+            height: 130px;
+            background-color: #7acc7a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            font-size: 22px;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.2s, transform 0.2s;
+            flex-shrink: 0;
+        }
+
+        .circle-btn:hover {
+            background-color: #62b362;
+            transform: translateY(-3px);
+        }
+
+        /* 2. 검색창 영역 */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 50px;
+        }
+
+        .search-box {
+            display: flex;
+            width: 1700px;
+            height: 55px;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px 20px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            padding: 10px 50px;
+            background-color: #388440;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* 3. 학습 기록 카드들을 아래로 내리기 위한 전체 감싸는 영역 */
+        .card-container {
+            margin-top: 60px;
+            /* 이 값을 키우면 카드들이 더 아래로 내려갑니다 */
+        }
+
+        /* 학습 기록 카드 스타일 */
+        .restudy-card {
+            margin-left: 70px;
+            width: calc(100% - 140px);
+            max-width: 2400px;
+            background-color: #d1f2d1;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            padding: 35px 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .log-row {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .log-label {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            min-width: 50px;
+        }
+
+        .log-content-box {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 16px 25px;
+            border-radius: 35px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .hashtag-area {
+            margin-left: 75px;
+            font-size: 17px;
+            color: #2b6130;
+            font-weight: 500;
+            display: flex;
+            gap: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 100px;
+            /* 카드들과의 간격 조절 */
+            margin-bottom: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            color: #333;
+            padding: 5px 10px;
+        }
+
+        .pagination a.active {
+            color: #000;
+        }
+
+        .pagination .arrow {
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 헤더 위치 원래대로 복원 -->
+    <header class="site-header">
+        <h1>JungMinder</h1>
+        <div class="user-section">
+            <span class="user-name">홍길동</span>
+            <button type="button" class="logout-btn" id="logoutButton">로그아웃</button>
+        </div>
+    </header>
+
+    <!-- 상단 동그라미 버튼 박스 (GET /review/list 연결) -->
+    <div class="rect">
+        <a href="" class="circle-btn">파이썬</a>
+        <a href="" class="circle-btn">알고리즘</a>
+        <a href="" class="circle-btn">운영체제</a>
+        <a href="" class="circle-btn">LLM</a>
+        <a href="" class="circle-btn">딥러닝</a>
+        <a href="" class="circle-btn">C</a>
+        <a href="" class="circle-btn">자바</a>
+    </div>
+
+    <!-- 검색창 -->
+    <div class="search-container">
+        <form class="search-box" action="/search" method="get">
+            <input type="search" name="q" placeholder="검색어를 입력하세요" required>
+            <button type="submit">검색</button>
+        </form>
+    </div>
+
+    <!-- 카드들을 아래로 내리기 위한 컨테이너 영역 시작 -->
+    <div class="card-container">
+        <!-- 학습 기록 카드 1 -->
+        <div class="restudy-card">
+            <div class="log-row">
+                <span class="log-label">제목</span>
+                <div class="log-content-box">파이썬</div>
+            </div>
+            <div class="log-row">
+                <span class="log-label">내용</span>
+                <div class="log-content-box">파이썬은....</div>
+            </div>
+            <div class="hashtag-area">
+                <span>#</span>
+                <span>#</span>
+                <span>#</span>
+            </div>
+        </div>
+
+        <!-- 학습 기록 카드 2 -->
+        <div class="restudy-card">
+            <div class="log-row">
+                <span class="log-label">제목</span>
+                <div class="log-content-box">알고리즘</div>
+            </div>
+            <div class="log-row">
+                <span class="log-label">내용</span>
+                <div class="log-content-box">알고리즘은....</div>
+            </div>
+            <div class="hashtag-area">
+                <span>#</span>
+                <span>#</span>
+                <span>#</span>
+            </div>
+        </div>
+    </div>
+    <!-- 카드 컨테이너 끝 -->
+
+    <!-- 페이지네이션 번호 -->
+    <div class="pagination">
+        <span class="arrow">&lt;</span>
+        <a href="#" class="active">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">5</a>
+        <a href="#">6</a>
+        <a href="#">7</a>
+        <a href="#">8</a>
+        <a href="#">9</a>
+        <a href="#">10</a>
+        <span>11</span>
+        <span class="arrow">&gt;</span>
+    </div>
+
+    <script>
+       
+    </script>
+
+</body>
+</html>

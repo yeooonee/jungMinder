@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-load_dotenv
+load_dotenv()
 
 class Config:
     ACCESS_KEY = os.getenv('ACCESS_KEY')
