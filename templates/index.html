@@ -9,10 +9,16 @@
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <link rel="stylesheet" href="/static/css/common.css">
+
     <style>
         body {
             margin: 0;
-            padding-bottom: 50px;
+            max-width: 1800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 40px;
+            box-sizing: border-box;
         }
 
         .site-header {
@@ -62,9 +68,7 @@
 
         /* 1. 상단 연두색 박스 (원래 크기) */
         .rect {
-            margin: 0 auto;
-            width: 2000px;
-            max-width: 2400px;
+            width: 100%;
             height: 180px;
             background-color: #99FF99;
             border-radius: 20px;
@@ -114,12 +118,12 @@
             display: flex;
             justify-content: center;
             width: 100%;
-            margin-bottom: 50px;
+            margin-bottom: 10px;
         }
 
         .search-box {
             display: flex;
-            width: 1700px;
+            width: 100%;
             height: 55px;
             gap: 10px;
         }
@@ -149,9 +153,8 @@
         }
 
         .restudy-card {
-            margin-left: 70px;
-            width: calc(100% - 140px);
-            max-width: 2400px;
+            width: 100%;
+            max-width: 100%;
             background-color: #d1f2d1;
             border-radius: 20px;
             margin-bottom: 35px;
@@ -206,7 +209,7 @@
             justify-content: center;
             align-items: center;
             gap: 15px;
-            margin-top: 100px;
+            margin-top: 30px;
             margin-bottom: 30px;
             font-size: 20px;
             font-weight: bold;
@@ -243,8 +246,11 @@
     </header>
 
     <!-- 상단 동그라미 버튼 박스 (복습 대상) -->
-    <div class="rect" id="circleContainer">
-        <!-- 자바스크립트에 의해 동그라미 버튼들이 생성됩니다 -->
+    <div class="rect">
+        <span style="font-size: 22px; font-weight: bold; color: #2b6130; white-space: nowrap;">복습 목록</span>
+        <div id="circleContainer" style="display: flex; gap: 20px; overflow-x: auto;">
+            <!-- 자바스크립트에 의해 동그라미 버튼들이 생성됩니다 -->
+        </div>
     </div>
 
     <!-- 검색창 및 새 글쓰기 버튼 -->
@@ -252,7 +258,7 @@
         <div class="search-box">
             <input type="search" id="searchInput" placeholder="검색어를 입력하세요">
             <button type="button" id="searchBtn">검색</button>
-            <button type="button" onclick="location.href='/studylogs/create'" style="background-color: #008000; color: #fff; border: none; border-radius: 4px; padding: 0 30px; font-size: 18px; cursor: pointer; white-space: nowrap;">새 글쓰기</button>
+            <button type="button" onclick="location.href='/studylogcreate'" style="background-color: #008000; color: #fff; border: none; border-radius: 4px; padding: 0 30px; font-size: 18px; cursor: pointer; white-space: nowrap;">새 글쓰기</button>
         </div>
     </div>
 
@@ -322,10 +328,8 @@
                 type: "GET",
                 url: "/review/list",
                 success: function(response) {
-                    if (response.result === "success") {
-                        let reviewLogs = response.reveiw_studylogs || [];
-                        renderCircles(reviewLogs);
-                    }
+                    let reviewLogs = response.reveiw_studylogs || [];
+                    renderCircles(reviewLogs);
                 },
                 error: function(xhr, status, error) {
                     console.error("복습 대상을 불러오는 중 오류가 발생했습니다:", error);
@@ -335,13 +339,16 @@
 
         // 하단 카드 데이터 호출 함수 (/studylogs/list)
         function loadCards(page, searchword) {
+            let url = `/studylogs/list?page=${page}`
+            if (searchword) url += `&searchword=${encodeURIComponent(searchword)}`
+
             $.ajax({
                 type: "GET",
-                url: `/studylogs/list?page=${page}&searchword=${encodeURIComponent(searchword)}`,
+                url: url,
                 success: function(response) {
                     if (response.result === "success") {
                         currentPage = response.current_page;
-                        let logs = response.studylogs || [];
+                        let logs = response.results || [];
                         let totalCount = response.total_count || 0;
 
                         renderCardsAndPagination(logs, totalCount, currentPage);
@@ -366,7 +373,7 @@
             for (let i = 0; i < reviewLogs.length; i++) {
                 let log = reviewLogs[i];
                 let circleHtml = `
-                    <a href="/studylog/lookup?id=${log._id}" class="circle-btn" title="${log.title}">
+                    <a href="/studylogs/view/${log._id}" class="circle-btn" title="${log.title}">
                         ${log.title}
                     </a>
                 `;
@@ -392,7 +399,7 @@
                 let cleanContent = removeTags(log.content);
                 
                 let cardHtml = `
-                    <div class="restudy-card" onclick="location.href='/studylog/lookup?id=${log._id}'">
+                    <div class="restudy-card" onclick="location.href='/studylogs/view/${log._id}'">
                         <div class="log-row">
                             <span class="log-label">제목</span>
                             <div class="log-content-box">${log.title}</div>
@@ -402,8 +409,7 @@
                             <div class="log-content-box">${cleanContent}</div>
                         </div>
                         <div class="hashtag-area">
-                            <span>#학습기록</span>
-                            <span>#복습</span>
+                            ${(log.tags || []).map(tag => `<span>${tag}</span>`).join('')}
                         </div>
                     </div>
                 `;
