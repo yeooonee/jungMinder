@@ -33,7 +33,7 @@ def studylogs_list():
             {'title':{"$regex":searchword}},
             {'content':{"$regex":searchword}}
         ]
-    results = list(db.studylogs.find(query))
+    results = list(db.studylogs.find(query).sort('reg_dt', -1))
     
     for n in results:
         n['_id'] = str(n['_id'])
