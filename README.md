@@ -9,4 +9,5 @@ pip install pymongo
 pip install python-dotenv
 pip install requests
 pip install boto3
+pip install Pillow
 ```
