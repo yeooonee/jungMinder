@@ -129,6 +129,9 @@
     <div id="line">
         <input type="text" id="studylog" name="docname" placeholder="제목을 입력하세요." value="{{ studylog.title if studylog else '' }}"/> <!-- *수정버튼을 통해 들어왔을때 기존 내용 자동 반영 -->
 
+        <!--수정시 기존 내용 저장-->
+        <textarea id="initialContent" style="display: none;">{{ studylog.content if studylog else '' }}</textarea>
+
         <!-- 에디터 영역 -->
         <div id="editor" style="margin: 20px;"></div>
 
@@ -149,12 +152,17 @@
             const day = String(today.getDate()).padStart(2, '0');
             // document.getElementById('regDt').textContent = `${year}-${month}-${day}`;
 
+            // 기존 학습일지 내용 가져오기
+            const initialContent = document.getElementById('initialContent').value;
+            
             // Toast UI Editor 초기화 (S3 업로드 연동)
             editor = new toastui.Editor({
                 el: document.querySelector('#editor'),
                 height: '700px',
                 initialEditType: 'wysiwyg',
                 previewStyle: 'vertical',
+                // 수정시 기존 내용 그대로 받아오도록 추가
+                initialValue: initialContent,
                 hooks: {
                     addImageBlobHook: async (blob, callback) => {
                         console.log("업로드할 이미지 블롭:", blob);
@@ -206,7 +214,8 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{ '/studylogs/update/' + studylog._id|string if studylog else '/studylogs/create' }}", <!--수정화면에서 저장했을 때 새 문서 생성하지 않고 기존 문서 수정을 구현하기 위해 추가-->
+                //수정화면에서 저장했을 때 새 문서 생성하지 않고 기존 문서 수정을 구현하기 위해 추가
+                url: "{{ '/studylogs/update/' + studylog._id|string if studylog else '/studylogs/create' }}", 
                 data: {
                     title: title,
                     content: content
@@ -216,7 +225,9 @@
                         alert(response["msg"]);
                     } else if (response["result"] === "success") {
                         alert(response["msg"] || "성공적으로 저장되었습니다!");
-                        window.location.replace("/main");
+
+                        // 최초 저장시 조회 페이지로 이동
+                        window.location.replace("/studylogs/view/" + response["id"]);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -228,7 +239,7 @@
 
         // 취소 버튼 클릭 시
         document.getElementById('cancelButton').addEventListener('click', function() {
-            window.location.href = "/";
+            window.history.back();
         });
 
         // 로그아웃
