@@ -3,27 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+    <title>login</title>    
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
+    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
-<body>
-    <input id="login-id" type="text" placeholder="아이디">
-    <input id="login-pw" type="password" placeholder="비밀번호">
+<body class="bg-white flex items-center justify-center min-h-screen m-0">
 
-    <button class = "border px-4 py-2" onclick="openSignup()">
-        회원가입
-    </button>
+    
+    <div class="flex flex-col md:flex-row items-center justify-between w-full max-w-6xl px-8 gap-16">
+        
+        
+        <div class="flex-1 text-left">
+            <h1 class="text-    7xl lg:text-8xl font-bold text-green-700 leading-tight -mt-3">
+                Jung<br>Minder
+            </h1>
+        </div>
+        
+        <div class="flex-1 flex justify-center w-full">
+            <div class="border border-gray-300 p-12 rounded-2xl w-full max-w-md flex flex-col gap-6 shadow-sm bg-white">                
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-2">
+                    Login
+                </h2>
+                <input 
+                    id="login-id" 
+                    type="text" 
+                    placeholder="아이디"
+                    class="bg-green-200 border-none p-4 rounded-lg outline-none text-gray-800 placeholder-gray-600 text-lg w-full box-border"
+                >
+                <input 
+                    id="login-pw" 
+                    type="password" 
+                    placeholder="비밀번호"
+                    class="bg-green-200 border-none p-4 rounded-lg outline-none text-gray-800 placeholder-gray-600 text-lg w-full box-border"
+                >
+                <div class="flex gap-4 mt-2">
+                    <button class="flex-1 bg-green-500 text-gray-900 font-bold py-3.5 rounded-lg hover:bg-green-600 transition text-lg cursor-pointer" onclick="openSignup()">
+                        회원가입
+                    </button>
+                    <button class="flex-1 bg-green-500 text-gray-900 font-bold py-3.5 rounded-lg hover:bg-green-600 transition text-lg cursor-pointer" onclick="login()">
+                        로그인
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <button class="border px-4 py-2" onclick="login()">
-        로그인
-    </button>
+    
+    <div id="signup-popup" class="hidden fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+        <div class="bg-white p-8 rounded-2xl w-96 shadow-lg flex flex-col gap-4">
 
-    <div id="signup-popup" class="hidden fixed inset-0 flex items-center justify-center bg-black/50" >
-        <div class="bg-white p-6 rounded-lg w-80">
-
-            <h2 class="text-x1 font-bold mb-4">
+            <h2 class="text-2xl font-bold text-green-800 mb-2">
                 회원가입
             </h2>
 
@@ -31,41 +61,44 @@
                 id="signup-name"
                 type="text"
                 placeholder="이름"
-                class="border p-2 w-full mb-4"
+                class="border border-gray-300 p-3 rounded-lg outline-none focus:border-green-600 text-base w-full"
             >
 
-            <input
-                id="signup-id"
-                type="text"
-                placeholder="아이디"
-                class="border px-2 py-1 mb-2"
-            >
-
-            <button class="border px-2 py-1 mb-3" onclick="checkId()">
-                중복확인
-            </button>
+            <div class="flex gap-2">
+                <input
+                    id="signup-id"
+                    type="text"
+                    placeholder="아이디"
+                    class="border border-gray-300 p-3 rounded-lg outline-none focus:border-green-600 text-base flex-1"
+                >
+                <button class="bg-green-700 text-white font-bold px-4 rounded-lg hover:bg-green-800 transition whitespace-nowrap text-sm cursor-pointer" onclick="checkId()">
+                    중복확인
+                </button>
+            </div>
 
             <input
                 id="signup-pw"
                 type="password"
                 placeholder="비밀번호"
-                class="border p-2 w-full mb-4"
+                class="border border-gray-300 p-3 rounded-lg outline-none focus:border-green-600 text-base w-full"
             >
 
             <input
                 id="signup-pw-confirm"
                 type="password"
                 placeholder="비밀번호 확인"
-                class="border p-2 w-full mb-4"
+                class="border border-gray-300 p-3 rounded-lg outline-none focus:border-green-600 text-base w-full"
             >
 
-            <button class="border px-4 py-2" onclick="signup()">
-                회원가입
-            </button>
+            <div class="flex gap-3 mt-4">
+                <button class="flex-1 bg-green-700 text-white font-bold py-3 rounded-lg hover:bg-green-800 transition cursor-pointer" onclick="signup()">
+                    회원가입
+                </button>
 
-            <button class="border px-4 py-2" onclick="classSignup()">
-                닫기
-            </button>
+                <button class="flex-1 bg-gray-200 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-300 transition cursor-pointer" onclick="classSignup()">
+                    닫기
+                </button>
+            </div>
 
         </div>
     </div>
@@ -108,7 +141,7 @@
             });
         }
 
-        // 회원가입 팝업창을 회원가입 버튼 누를때만 보이게 하는 함수
+        
         function openSignup() {
             $("#signup-popup").removeClass("hidden");
         }
@@ -116,7 +149,7 @@
         function classSignup() {
             $("#signup-popup").addClass("hidden");
         }
-        // 회원가입 함수
+        
         function signup() {
             let name = $("#signup-name").val();
             let id = $("#signup-id").val();
@@ -128,7 +161,7 @@
             console.log(pw);
             console.log(pwConfirm);
 
-            // 회원가입 플라스크로 보내기
+            
             $.ajax({
                 type: "POST",
                 url: "/signup",
@@ -148,7 +181,7 @@
                 }
             });
         }
-        // 아이디 중복확인 alert 띄우기
+        
         function checkId() {
             let id = $("#signup-id").val();
 
@@ -172,5 +205,6 @@
         }
 
     </script>
+    
 </body>
 </html>
