@@ -322,10 +322,8 @@
                 type: "GET",
                 url: "/review/list",
                 success: function(response) {
-                    if (response.result === "success") {
-                        let reviewLogs = response.reveiw_studylogs || [];
-                        renderCircles(reviewLogs);
-                    }
+                    let reviewLogs = response.reveiw_studylogs || [];
+                    renderCircles(reviewLogs);
                 },
                 error: function(xhr, status, error) {
                     console.error("복습 대상을 불러오는 중 오류가 발생했습니다:", error);
@@ -366,7 +364,7 @@
             for (let i = 0; i < reviewLogs.length; i++) {
                 let log = reviewLogs[i];
                 let circleHtml = `
-                    <a href="/studylog/lookup?id=${log._id}" class="circle-btn" title="${log.title}">
+                    <a href="/studylogs/view/${log._id}" class="circle-btn" title="${log.title}">
                         ${log.title}
                     </a>
                 `;
