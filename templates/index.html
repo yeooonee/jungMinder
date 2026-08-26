@@ -15,7 +15,6 @@
             padding-bottom: 50px;
         }
 
-        /* 헤더 위치와 정렬 원래대로 유지 */
         .site-header {
             display: flex;
             justify-content: space-between;
@@ -61,7 +60,7 @@
             background-color: #006600;
         }
 
-        /* 1. 상단 연두색 박스 */
+        /* 1. 상단 연두색 박스 (원래 크기) */
         .rect {
             margin: 0 auto;
             width: 2000px;
@@ -110,7 +109,7 @@
             transform: translateY(-3px);
         }
 
-        /* 2. 검색창 영역 */
+        /* 2. 검색창 영역 (원래 크기) */
         .search-container {
             display: flex;
             justify-content: center;
@@ -144,12 +143,11 @@
             cursor: pointer;
         }
 
-        /* 3. 학습 기록 카드들을 아래로 내리기 위한 전체 감싸는 영역 */
+        /* 3. 학습 기록 카드 영역 (원래 크기) */
         .card-container {
             margin-top: 60px;
         }
 
-        /* 학습 기록 카드 스타일 */
         .restudy-card {
             margin-left: 70px;
             width: calc(100% - 140px);
@@ -182,7 +180,6 @@
             min-width: 50px;
         }
 
-        /* 칸을 벗어나지 않고 텍스트만 깔끔하게 ... 처리하는 설정 */
         .log-content-box {
             flex: 1;
             background-color: #ffffff;
@@ -236,16 +233,16 @@
 </head>
 
 <body>
-    <!-- 헤더 영역 (로그인한 사용자 이름 반영 및 로그아웃 버튼 포함) -->
+    <!-- 헤더 영역 -->
     <header class="site-header">
         <h1 onclick="location.reload()">JungMinder</h1>
         <div class="user-section">
-            <span class="user-name">{{ user_name }}</span>
+            <span class="user-name">{{ session.get('user_name', '사용자') }}</span>
             <button type="button" class="logout-btn" id="logoutButton">로그아웃</button>
         </div>
     </header>
 
-    <!-- 상단 동그라미 버튼 박스 (항상 전체 데이터 유지) -->
+    <!-- 상단 동그라미 버튼 박스 (복습 대상) -->
     <div class="rect" id="circleContainer">
         <!-- 자바스크립트에 의해 동그라미 버튼들이 생성됩니다 -->
     </div>
@@ -255,75 +252,54 @@
         <div class="search-box">
             <input type="search" id="searchInput" placeholder="검색어를 입력하세요">
             <button type="button" id="searchBtn">검색</button>
-            <button type="button" onclick="location.href='/studylog/lookup'" style="background-color: #008000; color: #fff; border: none; border-radius: 4px; padding: 0 30px; font-size: 18px; cursor: pointer; white-space: nowrap;">새 글쓰기</button>
+            <button type="button" onclick="location.href='/studylogs/create'" style="background-color: #008000; color: #fff; border: none; border-radius: 4px; padding: 0 30px; font-size: 18px; cursor: pointer; white-space: nowrap;">새 글쓰기</button>
         </div>
     </div>
 
-    <!-- DB 데이터를 받아와 전체 카드가 동적으로 생성될 컨테이너 영역 -->
+    <!-- 하단 카드 컨테이너 -->
     <div class="card-container" id="cardContainer">
-        <!-- 자바스크립트에 의해 카드가 동적으로 채워집니다 -->
+        <!-- 자바스크립트에 의해 카드가 채워집니다 -->
     </div>
 
-    <!-- 페이지네이션 번호 (동적 생성) -->
+    <!-- 페이지네이션 번호 -->
     <div class="pagination" id="paginationContainer">
-        <!-- 자바스크립트에 의해 페이지 번호가 동적으로 생성됩니다 -->
+        <!-- 자바스크립트에 의해 페이지 번호가 채워집니다 -->
     </div>
 
-    <script>     
-        let allLogs = []; // 서버에서 받아온 전체 데이터
-        let filteredLogs = []; // 검색어로 필터링된 데이터
-        let currentPage = 1; // 현재 페이지 번호
-        const itemsPerPage = 2; // 페이지당 보여줄 카드 개수 (2장)
+    <script>    
+        let currentPage = 1;
+        let currentSearchWord = "";
+        const itemsPerPage = 2; // 페이지당 보여줄 카드 개수
 
-        // HTML 태그와 이미지 태그를 제거하고 순수 텍스트 본문만 추출하는 함수
         function removeTags(html) {
             let tmp = document.createElement("DIV");
             tmp.innerHTML = html;
             return tmp.textContent || tmp.innerText || "";
         }
 
-        // 페이지가 로드되자마자 GET 방식으로 /review/list 데이터를 호출
         $(document).ready(function() {
-            $.ajax({
-                type: "GET",
-                url: "/review/list",
-                data: {},
-                success: function(response) {
-                    if (response.result === "success") {
-                        allLogs = response.reveiw_studylogs || [];
-                        filteredLogs = allLogs; // 처음에는 전체 데이터로 초기화
-                        
-                        // 1. 상단 동그라미 버튼은 전체 데이터 기준으로 딱 한 번 고정 생성
-                        renderCircles();
-                        
-                        // 2. 하단 카드 및 페이지네이션 렌더링
-                        renderCardsAndPagination();
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("데이터를 불러오는 중 오류가 발생했습니다:", error);
-                }
-            });
+            // 1. 상단 동그라미 데이터 로드 (/review/list)
+            loadCircles();
 
-            // 검색 버튼 클릭 시 필터링 실행
+            // 2. 하단 카드 데이터 로드 (/studylogs/list)
+            loadCards(1, "");
+
+            // 검색 버튼 클릭 시
             $('#searchBtn').on('click', function() {
-                filterData();
+                currentSearchWord = $('#searchInput').val().trim();
+                loadCards(1, currentSearchWord);
             });
 
-            // 검색창에 글자가 입력될 때마다 실시간 체크 (백스페이스 등으로 빈칸이 되면 자동 복원)
-            $('#searchInput').on('input', function() {
-                filterData();
-            });
-
-            // 엔터키를 쳤을 때 검색 실행
+            // 검색창 엔터키 입력 시
             $('#searchInput').on('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    filterData();
+                    currentSearchWord = $('#searchInput').val().trim();
+                    loadCards(1, currentSearchWord);
                 }
             });
 
-            // 로그아웃 버튼 이벤트 연동
+            // 로그아웃 버튼 이벤트
             $('#logoutButton').on('click', function() {
                 $.ajax({
                     type: "POST",
@@ -340,18 +316,55 @@
             });
         });
 
-        // 상단 동그라미 버튼을 그려주는 함수 (항상 전체 항목 유지)
-        function renderCircles() {
+        // 상단 동그라미 데이터 호출 함수 (/review/list)
+        function loadCircles() {
+            $.ajax({
+                type: "GET",
+                url: "/review/list",
+                success: function(response) {
+                    if (response.result === "success") {
+                        let reviewLogs = response.reveiw_studylogs || [];
+                        renderCircles(reviewLogs);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("복습 대상을 불러오는 중 오류가 발생했습니다:", error);
+                }
+            });
+        }
+
+        // 하단 카드 데이터 호출 함수 (/studylogs/list)
+        function loadCards(page, searchword) {
+            $.ajax({
+                type: "GET",
+                url: `/studylogs/list?page=${page}&searchword=${encodeURIComponent(searchword)}`,
+                success: function(response) {
+                    if (response.result === "success") {
+                        currentPage = response.current_page;
+                        let logs = response.studylogs || [];
+                        let totalCount = response.total_count || 0;
+
+                        renderCardsAndPagination(logs, totalCount, currentPage);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("카드 목록을 불러오는 중 오류가 발생했습니다:", error);
+                }
+            });
+        }
+
+        // 상단 동그라미 렌더링
+        function renderCircles(reviewLogs) {
             let circleContainer = $('#circleContainer');
             circleContainer.empty();
 
-            if (allLogs.length === 0) {
-                circleContainer.append('<span style="padding-left: 20px; color: #333; font-size: 18px;">저장된 주제가 없습니다.</span>');
+            if (reviewLogs.length === 0) {
+                circleContainer.append('<span style="padding-left: 20px; color: #333; font-size: 18px;">오늘 복습할 주제가 없습니다.</span>');
                 return;
             }
 
-            for (let i = 0; i < allLogs.length; i++) {
-                let log = allLogs[i];
+            for (let i = 0; i < reviewLogs.length; i++) {
+                let log = reviewLogs[i];
                 let circleHtml = `
                     <a href="/studylog/lookup?id=${log._id}" class="circle-btn" title="${log.title}">
                         ${log.title}
@@ -361,46 +374,21 @@
             }
         }
 
-        // 검색어에 맞춰 데이터 필터링 후 카드 갱신
-        function filterData() {
-            let keyword = $('#searchInput').val().trim().toLowerCase();
-
-            if (keyword === "") {
-                filteredLogs = allLogs; // 검색어가 비어있으면 전체 데이터 복원
-            } else {
-                // title이나 content에 검색어가 포함된 항목만 추리기
-                filteredLogs = allLogs.filter(log => {
-                    let title = (log.title || "").toLowerCase();
-                    let content = removeTags(log.content || "").toLowerCase();
-                    return title.includes(keyword) || content.includes(keyword);
-                });
-            }
-
-            currentPage = 1; 
-            renderCardsAndPagination();
-        }
-
-        // 하단 카드와 페이지네이션을 그려주는 함수
-        function renderCardsAndPagination() {
+       
+        function renderCardsAndPagination(logs, totalCount, page) {
             let cardContainer = $('#cardContainer');
             let paginationContainer = $('#paginationContainer');
             
             cardContainer.empty();
             paginationContainer.empty();
 
-            if (filteredLogs.length === 0) {
+            if (logs.length === 0) {
                 cardContainer.append('<div style="text-align: center; font-size: 20px; color: #666; margin-top: 40px;">검색 결과가 없습니다.</div>');
                 return;
             }
 
-            // 현재 페이지 기준 2개씩 자르기
-            let startIndex = (currentPage - 1) * itemsPerPage;
-            let endIndex = startIndex + itemsPerPage;
-            let paginatedLogs = filteredLogs.slice(startIndex, endIndex);
-
-            // 하단 카드 생성
-            for (let i = 0; i < paginatedLogs.length; i++) {
-                let log = paginatedLogs[i];
+            for (let i = 0; i < logs.length; i++) {
+                let log = logs[i];
                 let cleanContent = removeTags(log.content);
                 
                 let cardHtml = `
@@ -423,28 +411,26 @@
             }
 
             // 페이지네이션 번호 생성
-            let totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+            let totalPages = Math.ceil(totalCount / itemsPerPage);
+            
             if (totalPages > 1) {
-                let paginationHtml = `<span class="arrow" onclick="changePage(${currentPage - 1})">&lt;</span>`;
+                let paginationHtml = `<span class="arrow" onclick="changePage(${page - 1})">&lt;</span>`;
                 
                 for (let i = 1; i <= totalPages; i++) {
-                    let activeClass = (i === currentPage) ? 'active' : '';
+                    let activeClass = (i === page) ? 'active' : '';
                     paginationHtml += `<a href="javascript:void(0);" class="${activeClass}" onclick="changePage(${i})">${i}</a>`;
                 }
                 
-                paginationHtml += `<span class="arrow" onclick="changePage(${currentPage + 1})">&gt;</span>`;
+                paginationHtml += `<span class="arrow" onclick="changePage(${page + 1})">&gt;</span>`;
                 paginationContainer.append(paginationHtml);
             }
         }
 
         // 페이지 번호 변경 함수
-        function changePage(page) {
-            let totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
-            if (page < 1 || page > totalPages) {
-                return;
-            }
-            currentPage = page;
-            renderCardsAndPagination();
+        function changePage(targetPage) {
+            if (targetPage < 1) return;
+            
+            loadCards(targetPage, currentSearchWord);
             window.scrollTo(0, 0);
         }
     </script>
