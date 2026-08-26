@@ -1,6 +1,7 @@
 from flask import Blueprint, Flask, render_template, request, jsonify
 from pymongo import MongoClient
 from ref.database import db
+from datetime import datetime
 
 # app.py 와 연결
 studylogs_bp = Blueprint('studylogs', __name__, url_prefix='/studylogs')
@@ -46,8 +47,11 @@ def studylogs_create():
         'title' : title,
         'content' : content,
         'reg_id' : reg_id,
-        'reg_dt' : reg_dt,
-        'mod_dt' : mod_dt
+        'reg_dt' : datetime.now(),
+        'mod_dt' : "",
+        'repetitions' : 0,
+        'interval': 1,
+        'easiness_factor': 2.5
     }
     
     db.studylogs.insert_one(studylogs)
