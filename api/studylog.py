@@ -1,4 +1,4 @@
-from flask import Blueprint, Flask, render_template, request, jsonify
+from flask import Blueprint, Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
 from ref.database import db
 from datetime import datetime
@@ -61,3 +61,19 @@ def studylogs_create():
     'result': 'success', 
     'msg': '학습일지가 성공적으로 저장되었습니다!'
 })
+
+# studylog 조회
+@studylogs_bp.route('/read', methods=['GET'])
+def studylogs_read():
+    user_id = session['user_id']
+    studylogs = list(
+        db.studylogs.find({'reg_id': user_id})
+    )
+
+    for studylog in studylogs:
+        studylog['_id'] = str(studylog['_id'])
+
+    return jsonify({
+        'result': 'success';
+        'studylogs': studylogs
+    })
