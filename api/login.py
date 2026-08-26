@@ -15,7 +15,7 @@ def home():
 
 @login_bp.route('/main')
 def main():
-   return render_template('main.html')
+   return render_template('index.html')
 
 #회원가입
 @login_bp.route('/signup', methods=['POST'])
@@ -36,7 +36,7 @@ def signup():
       })
 
     #비밀번호 해시하기
-   pw = generate_password_hash(pw)
+   pw = generate_password_hash(pw, method='pbkdf2:sha256')
 
    user = {
        "id": id,
@@ -71,6 +71,7 @@ def login():
       })
 
    session['user_id'] = id
+   session['user_name'] = user["name"]
 
    return jsonify({"result": "success"})
 
@@ -92,6 +93,20 @@ def check_id():
          "msg": "중복된 아이디입니다."
       })
 
+
+# 로그아웃
+@login_bp.route('/logout', methods=['POST'])
+def logout():
+   session.clear()
+   return jsonify({
+      "result" : "success",
+      "msg" : "로그아웃 되었습니다."
+   })
+
+
+# session 디코딩
 @login_bp.route('/check-session')
 def check_session():
-   return jsonify({"user_id": session.get('user_id')})
+   return jsonify({"user_id": session.get('user_id'), "user_name": session.get('user_name')})
+
+

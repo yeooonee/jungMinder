@@ -17,6 +17,17 @@ s3 = boto3.client(service_name='s3',
                   )
 
 
+def img_presigned_url(filename):
+    try:
+        url = s3.generate_presigned_url(
+        'get_object',
+        Params={'Bucket': Config.S3_BUCKET, 'Key': filename},
+        ExpiresIn=3600  # 1시간 유효
+        )
+    except Exception as e :
+        return {'error':str(e)},500
+    return url
+
 # 이미지 저장 (S3 서버에 업로드)
 @file_bp.route('/upload', methods=['POST'])
 def file_upload():
@@ -44,13 +55,14 @@ def file_upload():
     except Exception as e:
         return {'error':str(e)}, 500
     
-    img_url = new_file_name
-    return jsonify({'result':'success','img_url':img_url})
+    img_url = img_presigned_url(new_file_name)
+    return jsonify({'result':'success','img_name': new_file_name, 'img_url':img_url})
 
 
 # 이미지 읽어오기
 @file_bp.route('/read', methods=['POST'])
 def image_read():
+
     filename = request.form['image']
     
     # s3 = boto3.client('s3',
@@ -60,18 +72,11 @@ def image_read():
     # response = s3.get_object(Bucket=Config.S3_BUCKET, Key=filename)
     # location = s3.get_bucket_location(Bucket=Config.S3_BUCKET)["LocationConstraint"]
     
-    # 임시 전체 허용 경로
-    try:
-        url = s3.generate_presigned_url(
-        'get_object',
-        Params={'Bucket': Config.S3_BUCKET, 'Key': filename},
-        ExpiresIn=3600  # 1시간 유효
-        )
-    except Exception as e :
-        return {'error':str(e)},500
-    
     # img = Image.open(response['Body'])
     # return f"https://{Config.S3_BUCKET}.s3.{location}.amazonaws.com/{filename}"
+    
+    # 임시 전체 허용 경로
+    url = img_presigned_url(filename)
     return url
     
     

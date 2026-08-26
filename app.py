@@ -6,28 +6,30 @@ from api.studylog import *
 from api.review import *
 from api.file import *
 
-from pymongo import MongoClient
-
-#from api.file import file_bp  파일 위치에 맞게 임포트
-#app.register_blueprint(file_bp)
-
-client = MongoClient('localhost',27017)
-db = client.dbjungminder
+from ref.database import db
 
 app = Flask(__name__)
 
 # .env 내용 불러오기
 app.config.from_object(Config)
 
+#flask session용 비밀번호 암호화
+app.secret_key = "test-secret-key"
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('login.html')
+
+@app.route('/studylogcreate')
+def studylogcreate():
+    print(session)
+    return render_template('studylogcreate.html', user_name=session.get('user_name'))
 
 # api/*.py 등록
+app.register_blueprint(login_bp)
 app.register_blueprint(studylogs_bp)
 app.register_blueprint(file_bp)
 app.register_blueprint(review_bp)
-
 
 
 if __name__ == '__main__':
