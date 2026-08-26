@@ -29,20 +29,21 @@ def studylogs_create():
         'easiness_factor': 2.5,
         'review_date' : datetime.now()
     }
-    
-    db.studylogs.insert_one(studylogs)
+    result = db.studylogs.insert_one(studylogs)
     
     return jsonify({
     'result': 'success', 
-    'msg': '학습일지가 성공적으로 저장되었습니다!'
-})
+    'msg': '학습일지가 성공적으로 저장되었습니다!',
+    #학습기록 최초 저장 이후 조회페이지로 가기 위해 _id 반환하기 위한 코드
+    'id': str(result.inserted_id)
+    })
 
 # studylog 조회
 @studylogs_bp.route('/view/<id>', methods=['GET'])
 def studylogs_view(id):
     #테스트용으로 임의로 넣은 로그인정보
-    #user_id = 'test1234'
-    user_id = session['user_id']
+    user_id = 'test1234'
+    #user_id = session['user_id']
 
     studylog = db.studylogs.find_one({
         '_id': ObjectId(id),
@@ -62,8 +63,8 @@ def studylogs_view(id):
 @studylogs_bp.route('/create/<id>', methods=['GET'])
 def studylogs_create_edit(id):
     #테스트용으로 임의로 넣은 로그인정보
-    #user_id = 'test1234'
-    user_id = session['user_id']
+    user_id = 'test1234'
+    #user_id = session['user_id']
 
     studylog = db.studylogs.find_one({
         '_id': ObjectId(id),
@@ -106,5 +107,17 @@ def studylogs_update(id):
 
     return jsonify({
         'result': 'success',
-        'msg': '학습일지가 성공적으로 수정되었습니다.!'
+        'msg': '학습일지가 성공적으로 수정되었습니다.!',
+        'id': str(id)
     })
+
+# studylog 삭제
+#@studylogs_bp.route('/delete/<id>', methods=['POST'])
+#def studylogs_delete(id):
+    #테스트용으로 임의로 넣은 로그인정보
+#    user_id = 'test1234'
+    #user_id = session['user_id']
+
+#    result = db.studylogs.delete_one({
+
+#    })

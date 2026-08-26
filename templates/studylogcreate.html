@@ -216,7 +216,9 @@
                         alert(response["msg"]);
                     } else if (response["result"] === "success") {
                         alert(response["msg"] || "성공적으로 저장되었습니다!");
-                        window.location.replace("/");
+
+                        // 최초 저장시 조회 페이지로 이동
+                        window.location.replace("/studylogs/view/" + response["id"]);
                     }
                 },
                 error: function (xhr, status, error) {
