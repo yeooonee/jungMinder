@@ -9,6 +9,8 @@
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <link rel="stylesheet" href="/static/css/common.css">
+
     <style>
         body {
             margin: 0;
@@ -333,13 +335,16 @@
 
         // 하단 카드 데이터 호출 함수 (/studylogs/list)
         function loadCards(page, searchword) {
+            let url = `/studylogs/list?page=${page}`
+            if (searchword) url += `&searchword=${encodeURIComponent(searchword)}`
+
             $.ajax({
                 type: "GET",
-                url: `/studylogs/list?page=${page}&searchword=${encodeURIComponent(searchword)}`,
+                url: url,
                 success: function(response) {
                     if (response.result === "success") {
                         currentPage = response.current_page;
-                        let logs = response.studylogs || [];
+                        let logs = response.results || [];
                         let totalCount = response.total_count || 0;
 
                         renderCardsAndPagination(logs, totalCount, currentPage);
