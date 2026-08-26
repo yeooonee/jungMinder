@@ -51,7 +51,8 @@ def studylogs_create():
         'mod_dt' : "",
         'repetitions' : 0,
         'interval': 1,
-        'easiness_factor': 2.5
+        'easiness_factor': 2.5,
+        'review_date' : datetime.now()
     }
     
     db.studylogs.insert_one(studylogs)
