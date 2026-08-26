@@ -26,7 +26,7 @@ def home():
 # api/*.py 등록
 app.register_blueprint(studylogs_bp)
 app.register_blueprint(file_bp)
-
+app.register_blueprint(review_bp)
 
 
 
