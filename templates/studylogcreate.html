@@ -216,7 +216,7 @@
                         alert(response["msg"]);
                     } else if (response["result"] === "success") {
                         alert(response["msg"] || "성공적으로 저장되었습니다!");
-                        window.location.replace("/");
+                        window.location.replace("/main");
                     }
                 },
                 error: function (xhr, status, error) {
