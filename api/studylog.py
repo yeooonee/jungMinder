@@ -22,20 +22,18 @@ def get_paginated_list(data, page=1, page_size=2):
 # studylog 목록 조회
 @studylogs_bp.route('/list', methods=['GET'])
 def studylogs_list():
+    user_id = session.get('user_id')
     page = request.args.get('page',1,type=int)
     
     # 검색어가 있을 때 검색조건 추가 
-    query = {}
+    query = {'reg_id': user_id}
     if request.form.get('searchword'):
-        searchword = request.form['searchword']
-        query = {'$or': [
-                    {'title':{"$regex":searchword}},
-                    {'content':{"$regex":searchword}}
-                ]
-        }
+        searchword = request.args.get('searchword')
+        query['$or'] = [
+            {'title':{"$regex":searchword}},
+            {'content':{"$regex":searchword}}
+        ]
     results = list(db.studylogs.find(query))
-    
-    print(results)
     
     for n in results:
         n['_id'] = str(n['_id'])
@@ -120,8 +118,7 @@ def studylogs_view(id):
 # studylog 수정 화면
 @studylogs_bp.route('/create/<id>', methods=['GET'])
 def studylogs_create_edit(id):
-    #테스트용으로 임의로 넣은 로그인정보
-    #user_id = 'test1234'
+
     user_id = session['user_id']
 
     studylog = db.studylogs.find_one({
@@ -172,8 +169,6 @@ def studylogs_update(id):
 # studylog 삭제
 @studylogs_bp.route('/delete/<id>', methods=['POST'])
 def studylogs_delete(id):
-    #테스트용으로 임의로 넣은 로그인정보
-    #user_id = 'test1234'
     user_id = session['user_id']
 
     result = db.studylogs.delete_one({
