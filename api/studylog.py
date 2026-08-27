@@ -79,8 +79,6 @@ def studylogs_create():
 # studylog 조회
 @studylogs_bp.route('/view/<id>', methods=['GET'])
 def studylogs_view(id):
-    #테스트용으로 임의로 넣은 로그인정보
-    #user_id = 'test1234'
     user_id = session['user_id']
 
     studylog = db.studylogs.find_one({
@@ -108,6 +106,13 @@ def studylogs_view(id):
     print(content)
     
     studylog['content'] = content
+    
+    reg_dt = datetime.strftime(studylog['reg_dt'],'%Y/%m/%d %H:%M:%S')
+    studylog['reg_dt'] = reg_dt
+    
+    if studylog['mod_dt']:
+        mod_dt = datetime.strftime(studylog['mod_dt'],'%Y/%m/%d %H:%M:%S')
+        studylog['mod_dt'] = mod_dt
 
     #ssr
     return render_template(
