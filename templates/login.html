@@ -183,7 +183,7 @@
         }
         
         function checkId() {
-            let id = $("#signdup-id").val();
+            let id = $("#signup-id").val();
 
             console.log(id);
 
@@ -194,12 +194,7 @@
                     id: id
                 },
                 success: function (response) {
-                    if (response["result"] == "fail") {
-                        alert(response["msg"]);
-                    }
-                    else if (response["result"] == "success") {
-                        alert(response["msg"]);
-                    }
+                    alert(response["msg"]);
                 }
             });
         }
