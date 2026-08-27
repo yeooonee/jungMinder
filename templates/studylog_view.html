@@ -33,7 +33,9 @@
                 <div class="flex gap-4 text-gray-500 text-lg">
                     <span>{{ studylog.reg_id }}</span>
                     <span>{{ studylog.reg_dt }}</span>
-                    <span>({{ studylog.mod_dt }})</span>
+                    {% if studylog.mod_dt %}
+                        <span>({{ studylog.mod_dt }})</span>
+                    {% endif %}
                 </div>
             </div>
             
